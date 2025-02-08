@@ -166,6 +166,21 @@ app.get("/api/todos", authenticateUser, async (req, res) => {
   }
 });
 
+app.put("/api/todos/:todoId", authenticateUser, async (req, res) => {
+  try {
+    const todo = await Todo.findByIdAndUpdate(req.params.todoId, req.body, {
+      new: true,
+    });
+    if (!todo) {
+      return res.status(404).json({ message: "No todo found" });
+    }
+
+    res.json({ message: "Todo updated successfully", todo });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 try {
   mongoose
     .connect(process.env.MONGODB_URI)
