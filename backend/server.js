@@ -199,13 +199,30 @@ app.delete("/api/todos/:todoId", authenticateUser, async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
       $pull: { todos: req.params.todoId },
     });
-    
+
     res.json({ message: "Todo deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+app.get("/api/todos/:todoId", authenticateUser, async (req, res) => {
+  try {
+    const todo = await Todo.findOne({
+      _id: req.params.todoId,
+      user: req.user._id,
+    });
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+    res.json({ todo });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 try {
   mongoose
     .connect(process.env.MONGODB_URI)
