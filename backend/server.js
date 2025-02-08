@@ -3,10 +3,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import connectDB from "./config/db.js";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+
+connectDB();
 
 const PORT = process.env.PORT || 8080;
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -224,12 +227,6 @@ app.get("/api/todos/:todoId", authenticateUser, async (req, res) => {
 });
 
 try {
-  mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => {
-      console.log("Connected to MongoDB");
-    })
-    .catch((err) => console.log("DB Connection Error: " + err));
   app.listen(PORT, () => {
     console.log("listening on port " + PORT);
   });
