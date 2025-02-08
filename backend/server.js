@@ -168,14 +168,39 @@ app.get("/api/todos", authenticateUser, async (req, res) => {
 
 app.put("/api/todos/:todoId", authenticateUser, async (req, res) => {
   try {
-    const todo = await Todo.findByIdAndUpdate(req.params.todoId, req.body, {
-      new: true,
-    });
+    const todo = await Todo.findByIdAndUpdate(
+      { _id: req.params.todoId, user: req.user._id },
+      req.body,
+      {
+        new: true,
+      }
+    );
     if (!todo) {
       return res.status(404).json({ message: "No todo found" });
     }
 
     res.json({ message: "Todo updated successfully", todo });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.delete("/api/todos/:todoId", authenticateUser, async (req, res) => {
+  try {
+    const todo = await Todo.findByIdAndDelete({
+      _id: req.params.todoId,
+      user: req.user._id,
+    });
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { todos: req.params.todoId },
+    });
+    
+    res.json({ message: "Todo deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
