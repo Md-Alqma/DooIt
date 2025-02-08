@@ -158,13 +158,8 @@ app.post("/api/todos", authenticateUser, async (req, res) => {
 
 app.get("/api/todos", authenticateUser, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate("todos");
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.json({ todos: user.todos });
+    const todos = await Todo.find({ user: req.user._id });
+    res.json({ todos });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
