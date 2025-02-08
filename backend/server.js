@@ -127,6 +127,50 @@ app.post("/api/users/signin", async (req, res) => {
   }
 });
 
+app.post("/api/todos", authenticateUser, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const { title, description, status, priority } = req.body;
+    if (!title) {
+      return res.status(400).json({ message: "Title is required" });
+    }
+    const newTodo = new Todo({
+      title: title,
+      description: description,
+      status: status || "pending",
+      priority: priority || "medium",
+      user: req.user._id,
+    });
+    await newTodo.save();
+    user.todos.push(newTodo._id);
+    await user.save();
+
+    res
+      .status(201)
+      .json({ message: "Todo created successfully", todo: newTodo });
+  } catch (error) {
+    res.status(500).json({ message: "Inernal server error" });
+  }
+});
+
+app.get("/api/todos", authenticateUser, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate("todos");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ todos: user.todos });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 try {
   mongoose
     .connect(process.env.MONGODB_URI)
