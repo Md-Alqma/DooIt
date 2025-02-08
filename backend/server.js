@@ -44,64 +44,88 @@ const generateToken = (user) => {
 };
 
 const authenticateUser = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(403).json({ message: "No token" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token" });
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ message: "Access denied. No token provided." });
     }
-    req.user = user;
-    next();
-  });
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          return res
+            .status(401)
+            .json({ message: "Token expired, please login again." });
+        }
+        return res.status(403).json({ message: "Invalid token." });
+      }
+      req.user = decoded;
+      next();
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
 };
-app.get("/", (req, res) => {
-  res.send(`<h1>DooIt</h1>`);
-});
 
 app.post("/api/users/signup", async (req, res) => {
-  const { username, email, password } = req.body;
-  const existingUser = await User.findOne({ username });
-  if (existingUser) {
-    return res.status(409).json({ message: "User already exists" });
+  try {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: "User with this username or email already exists." });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username: username.toLowerCase(),
+      email,
+      password: hashedPassword,
+    });
+    const user = await newUser.save();
+    res.status(201).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      token: generateToken(user),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
-
-  const newUser = new User({
-    username: username,
-    email: email,
-    password: bcrypt.hashSync(password, 8),
-  });
-  const user = await newUser.save();
-  res.json({
-    _id: user._id,
-    username: user.username,
-    email: user.email,
-    token: generateToken(user),
-  });
 });
 
 app.post("/api/users/signin", async (req, res) => {
-  const { username, password } = req.headers;
-  const user = await User.findOne({ username });
-  if (user) {
-    if (bcrypt.compareSync(password, user.password)) {
-      return res.json({
-        message: "User signed in successfully",
-        _id: user._id,
-        username: username,
-        email: user.email,
-        token: generateToken(user),
-      });
-    }
-    return res.status(401).json({ message: "Incorrect username or password" });
-  }
-  res.status(401).json({ message: "Incorrect username or password" });
-});
+  try {
+    const { username, password } = req.body;
 
-app.post('/api/todo', authenticateUser, )
+    const user = await User.findOne({ username: username.toLowerCase() });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    const token = generateToken(user);
+    res.json({
+      message: "User signed in successfully",
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      token: generateToken(user),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 try {
   mongoose
