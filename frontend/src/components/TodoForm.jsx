@@ -13,7 +13,6 @@ const TodoForm = () => {
           type="text"
           name="title"
           placeholder="Add a new todo..."
-          ref={titleRef}
         />
         <CustomSelect
           options={[
