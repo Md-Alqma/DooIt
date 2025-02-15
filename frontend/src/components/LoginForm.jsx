@@ -28,6 +28,7 @@ const LoginForm = () => {
       );
       const data = await result.json();
       setUser(data);
+      localStorage.setItem("token", data.token);
       setUsername("");
       setPassword("");
       navigate("/");
