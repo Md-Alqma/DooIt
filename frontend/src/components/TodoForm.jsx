@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CustomSelect from "./CutomSelect";
 import Modal from "./Modal";
 
@@ -7,6 +7,51 @@ const TodoForm = () => {
   const [priority, setPriority] = useState("medium");
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [todos, setTodos] = useState([]);
+
+  const resetValues = () => {
+    setTitle("");
+    setDescription("");
+    setStatus("pending");
+    setPriority("medium");
+  };
+
+  const addTodo = async (e) => {
+    e.preventDefault();
+    try {
+      const settings = {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          status,
+          priority,
+        }),
+      };
+
+      const result = await fetch("http://localhost:8080/api/todos", settings);
+      if (result.status !== 201) {
+        const data = await result.json();
+        alert(data.message);
+        return;
+      }
+      const data = await result.json();
+      setTodos((prev) => {
+        const updatedTodos = [...prev, data.todo];
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
+        return updatedTodos;
+      });
+      resetValues();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <form action="#" className="space-y-4">
@@ -26,27 +71,12 @@ const TodoForm = () => {
         >
           Description
         </button>
-        <Modal open={open} onClose={() => setOpen(false)}>
-          <div className="mx-auto my-4 w-full">
-            <h3 className="text-lg font-black text-gray-700 mb-2">
-              Add Description
-            </h3>
-            <textarea
-              cols="50"
-              rows="10"
-              placeholder="description..."
-              className="border border-gray-200 rounded-lg p-2 outline-gray-400"
-            />
-            <br />
-            <button
-              type="button"
-              className="border border-gray-400 w-[80px] rounded cursor-pointer bg-[var(--color-primary)] text-white p-2"
-            >
-              Add
-            </button>
-          </div>
-        </Modal>
-        {/* {toggleModal && <Modal />} */}
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          desc={description}
+          setDesc={setDescription}
+        />
         <CustomSelect
           options={[
             { value: "pending" },

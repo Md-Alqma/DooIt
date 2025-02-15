@@ -1,7 +1,8 @@
-import { useState, memo } from "react";
+import { useState, memo, useRef } from "react";
 
 const CustomSelect = memo(({ options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="relative w-[120px]">
       <button
