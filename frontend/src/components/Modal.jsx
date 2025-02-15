@@ -1,6 +1,6 @@
 import React from "react";
 
-const Modal = ({ open, onClose, desc, setDesc }) => {
+const Modal = ({ open, onClose, children }) => {
   return (
     <div
       className={`fixed inset-0 flex justify-center items-center transition-colors ${
@@ -22,27 +22,7 @@ const Modal = ({ open, onClose, desc, setDesc }) => {
         >
           X
         </button>
-        <div className="mx-auto my-4 w-full">
-          <h3 className="text-lg font-black text-gray-700 mb-2">
-            Add Description
-          </h3>
-          <textarea
-            cols="50"
-            rows="10"
-            placeholder="description..."
-            className="border border-gray-200 rounded-lg p-2 outline-gray-400"
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-          />
-          <br />
-          <button
-            type="button"
-            className="border border-gray-400 w-[80px] rounded cursor-pointer bg-[var(--color-primary)] text-white p-2"
-            onClick={onClose}
-          >
-            Add
-          </button>
-        </div>
+        {children}
       </div>
     </div>
   );

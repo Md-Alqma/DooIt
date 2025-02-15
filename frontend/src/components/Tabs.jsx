@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const Tabs = () => {
-  const tabs = ["All", "Active", "Completed", "Archived"];
+  const tabs = ["All", "Active", "Pendig", "Completed", "Archived"];
   const [activeTab, setActiveTab] = useState("All");
 
   return (

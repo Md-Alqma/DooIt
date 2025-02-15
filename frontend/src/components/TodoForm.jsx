@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import CustomSelect from "./CutomSelect";
 import Modal from "./Modal";
+import DescriptionModal from "./DescriptionModal";
 
 const TodoForm = () => {
   const [status, setStatus] = useState("pending");
@@ -71,12 +72,14 @@ const TodoForm = () => {
         >
           Description
         </button>
-        <Modal
-          open={open}
-          onClose={() => setOpen(false)}
-          desc={description}
-          setDesc={setDescription}
-        />
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <DescriptionModal
+            open={open}
+            onClose={() => setOpen(false)}
+            description={description}
+            setDescription={setDescription}
+          />
+        </Modal>
         <CustomSelect
           options={[
             { value: "pending" },

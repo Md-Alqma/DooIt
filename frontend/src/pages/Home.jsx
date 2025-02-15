@@ -1,6 +1,7 @@
 import React from "react";
 import Tabs from "../components/Tabs";
 import TodoForm from "../components/TodoForm";
+import TodoList from "../components/TodoList";
 
 const Home = () => {
   return (
@@ -14,6 +15,9 @@ const Home = () => {
         <main>
           <TodoForm />
           <Tabs />
+          <br />
+          <br />
+          <TodoList />
         </main>
       </div>
     </div>
