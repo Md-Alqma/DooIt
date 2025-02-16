@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 
-const Signin = () => {
+const Signin = ({ setIsLoggedIn }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 shadow-lg rounded-lg w-96">
@@ -13,7 +13,7 @@ const Signin = () => {
         </p>
 
         <div className="mt-6">
-          <LoginForm />
+          <LoginForm setIsLoggedIn={setIsLoggedIn} />
         </div>
 
         <div className="mt-4 text-center">

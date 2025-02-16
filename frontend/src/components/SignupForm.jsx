@@ -1,10 +1,18 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  const resetForm = () => {
+    setUsername("");
+    setPassword("");
+    setEmail("");
+  };
   const handleRegistration = async (e) => {
     e.preventDefault();
     const settings = {
@@ -24,11 +32,16 @@ const SignupForm = () => {
         "http://localhost:8080/api/users/signup",
         settings
       );
+      if (result.status !== 201) {
+        const data = await result.json();
+        console.error(data.message);
+        return;
+      }
       const data = await result.json();
       setUser(data);
-      setUsername("");
-      setEmail("");
-      setPassword("");
+      localStorage.setItem("token", data.token);
+      resetForm();
+      navigate("/todos");
     } catch (error) {
       console.error(error);
     }

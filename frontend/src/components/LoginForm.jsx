@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
+const LoginForm = ({ setIsLoggedIn }) => {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const resetForm = () => {
+    setUsername("");
+    setPassword("");
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -26,12 +29,17 @@ const LoginForm = () => {
         "http://localhost:8080/api/users/signin",
         settings
       );
+      if (result.status !== 200) {
+        const data = await result.json();
+        console.error(data.message);
+        return;
+      }
       const data = await result.json();
       setUser(data);
       localStorage.setItem("token", data.token);
-      setUsername("");
-      setPassword("");
-      navigate("/");
+      resetForm();
+      setIsLoggedIn(true);
+      navigate("/todos");
     } catch (error) {
       console.error(error);
     }
