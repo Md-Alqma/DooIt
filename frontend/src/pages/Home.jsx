@@ -48,7 +48,7 @@ const Home = () => {
       </div>
 
       {/* Right Section - Illustration */}
-      <div className="hidden md:flex flex-1 justify-center">
+      <div className="hidden md:flex flex-1 justify-center ">
         <img
           className="max-w-md"
           src="/todo-illustration.png"
