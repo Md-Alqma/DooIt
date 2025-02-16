@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -42,9 +43,11 @@ const Home = () => {
         </p>
 
         {/* CTA Button */}
-        <button className="mt-4 px-6 py-3 text-lg font-semibold bg-[var(--color-primary)] text-white rounded-lg shadow-md transition duration-300 hover:bg-purple-700 cursor-pointer">
-          Get Started
-        </button>
+        <Link to="/signup">
+          <button className="mt-4 px-6 py-3 text-lg font-semibold bg-[var(--color-primary)] text-white rounded-lg shadow-md transition duration-300 hover:bg-purple-700 cursor-pointer">
+            Get Started
+          </button>
+        </Link>
       </div>
 
       {/* Right Section - Illustration */}
