@@ -18,7 +18,7 @@ const TodoItem = ({ title, description, status, priority }) => {
   const [checked, setChecked] = useState(false);
 
   const truncatedDescription =
-    description.length > 50 ? description.slice(0, 50) + "..." : description;
+    description?.length > 50 ? description.slice(0, 50) + "..." : description;
 
   return (
     <div

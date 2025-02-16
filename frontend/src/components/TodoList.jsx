@@ -22,6 +22,7 @@ const TodoList = () => {
       }
     };
 
+    fetchTodos();
     // setInterval(() => {
     //   fetchTodos();
     // }, 100);

@@ -5,7 +5,7 @@ import TodoList from "../components/TodoList";
 
 const Todos = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex justify-center px-12 mt-20">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <header className="flex justify-center items-center">
           <h1 className="text-4xl font-bold mb-10 text-[var(--color-primary)]">
