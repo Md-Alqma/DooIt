@@ -37,6 +37,7 @@ const TodoList = () => {
           description={todo.description}
           status={todo.status}
           priority={todo.priority}
+          id={todo._id}
         />
       ))}
     </div>

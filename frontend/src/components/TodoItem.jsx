@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Modal from "./Modal";
+import TodoEdit from "./TodoEdit";
 
 const statusColors = {
   pending: "bg-yellow-500",
@@ -14,8 +17,10 @@ const priorityColors = {
   urgent: "bg-red-500",
 };
 
-const TodoItem = ({ title, description, status, priority }) => {
+const TodoItem = ({ id, title, description, status, priority }) => {
   const [checked, setChecked] = useState(false);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const truncatedDescription =
     description?.length > 50 ? description.slice(0, 50) + "..." : description;
@@ -59,7 +64,13 @@ const TodoItem = ({ title, description, status, priority }) => {
 
       {/* Action Buttons */}
       <div className="flex gap-4">
-        <button className="p-2 rounded-lg hover:bg-blue-100 transition cursor-pointer">
+        <button
+          onClick={() => {
+            setOpen(true);
+            navigate(`/todos/${id}`);
+          }}
+          className="p-2 rounded-lg hover:bg-blue-100 transition cursor-pointer"
+        >
           <img width={32} src="/view.png" alt="Edit" />
         </button>
         <button className="p-2 rounded-lg hover:bg-yellow-100 transition cursor-pointer">

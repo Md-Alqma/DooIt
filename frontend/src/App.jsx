@@ -8,6 +8,7 @@ import Todos from "./pages/Todos";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import { useState } from "react";
+import TodoEdit from "./components/TodoEdit";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -21,7 +22,9 @@ function App() {
           path="/signin"
           element={<Signin type={true} setIsLoggedIn={setIsLoggedIn} />}
         />
-        <Route path="/todos" element={<Todos />} />
+        <Route path="/todos" element={<Todos />}>
+          <Route path=":todoId" element={<TodoEdit />} />
+        </Route>
       </Routes>
       <Footer />
     </>
